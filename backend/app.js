@@ -6,6 +6,8 @@ const fs = require('fs');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+
 
 
 // DEVELOPEMENT: Pour empêcher toutes falsifications au niveau des cookies
@@ -42,6 +44,11 @@ app.use(helmet.frameguard({ action: 'deny' })); //Pour interdire d'inclure cette
 
 const accessLogServer = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogServer }));
+
+// Permet de valider les entrées utilisateur et de remplacer les caractères interdits par "_"
+app.use(mongoSanitize({
+  replaceWith: '_'
+}));
 
 // Routes
 
